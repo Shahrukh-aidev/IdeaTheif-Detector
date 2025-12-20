@@ -1,0 +1,7 @@
+{
+  "name": "Idea Thief Detector",
+  "description": "A comprehensive plagiarism and similarity detection engine for project ideas, searching across GitHub, arXiv, and StackOverflow to calculate a uniqueness score and provide optimization suggestions.",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}
