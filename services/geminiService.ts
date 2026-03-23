@@ -14,46 +14,43 @@ export const analyzeIdea = async (
     : "No prior local projects.";
 
   const prompt = `
-    You are the 'Idea Thief Detector' AI Engine.
+    You are the Idea Thief Detector AI Engine.
     Analyze the originality of this startup idea: "${idea}"
-    Prior projects context: "${localContext}"
-
-    Return ONLY a valid JSON object with NO extra text, NO markdown, NO backticks:
+    Prior projects: "${localContext}"
+    Return ONLY valid JSON, no extra text:
     {
       "uniquenessScore": 45,
       "noveltyLevel": "MODERATE",
-      "honestVerdict": "One brutal honest sentence about this idea",
-      "summary": "2-3 sentence summary of the competitive landscape",
-      "explainability": "Why this score was given",
+      "honestVerdict": "verdict here",
+      "summary": "summary here",
+      "explainability": "explanation here",
       "hotZoneAlert": true,
       "dimensions": { "concept": 40, "execution": 50, "domainTransfer": 60 },
       "lineage": {
-        "ancestors": ["ancestor 1", "ancestor 2"],
-        "siblings": ["Competitor A", "Competitor B"],
-        "unexploredBranches": ["Pivot idea 1", "Pivot idea 2"]
+        "ancestors": ["ancestor 1"],
+        "siblings": ["sibling 1"],
+        "unexploredBranches": ["branch 1"]
       },
       "psychology": {
-        "marketHook": "What would make people buy this",
-        "failureSignals": ["Risk 1", "Risk 2", "Risk 3"]
+        "marketHook": "hook here",
+        "failureSignals": ["risk 1", "risk 2"]
       },
       "intel": {
-        "industryTrend": "Current trend in this space",
+        "industryTrend": "trend here",
         "activityLevel": 75,
-        "intelDrop": "Key intelligence about the market"
+        "intelDrop": "intel here"
       },
-      "matches": [
-        {
-          "id": "1",
-          "title": "Similar Product Name",
-          "description": "What this competitor does",
-          "url": "https://example.com",
-          "source": "Product Hunt",
-          "similarity": 85,
-          "matchType": "Direct Competitor",
-          "metadata": { "year": "2024", "classification": { "type": "SaaS", "focus": "AI" } }
-        }
-      ],
-      "suggestions": ["Pivot 1", "Pivot 2", "Pivot 3"],
+      "matches": [{
+        "id": "1",
+        "title": "Competitor",
+        "description": "what they do",
+        "url": "https://example.com",
+        "source": "Product Hunt",
+        "similarity": 85,
+        "matchType": "Direct Competitor",
+        "metadata": { "year": "2024", "classification": { "type": "SaaS", "focus": "AI" }}
+      }],
+      "suggestions": ["suggestion 1", "suggestion 2"],
       "confidence": 80
     }
   `;
@@ -67,7 +64,6 @@ export const analyzeIdea = async (
     const text = response.text.trim();
     const jsonMatch = text.match(/\{[\s\S]*\}/);
     if (!jsonMatch) throw new Error("No JSON in response");
-
     const result = JSON.parse(jsonMatch[0]);
 
     return {
@@ -89,13 +85,3 @@ export const analyzeIdea = async (
     throw new Error("Rapid analysis failed. The idea may be too complex or the network is congested.");
   }
 };
-```
-
----
-
-**Fix 2 — Add environment variable in Vercel:**
-
-Go to Vercel → your project → **Settings → Environment Variables** → add:
-```
-Key:   VITE_GEMINI_API_KEY
-Value: your full gemini api key
