@@ -17,7 +17,7 @@ export const analyzeIdea = async (
     You are the Idea Thief Detector AI Engine.
     Analyze the originality of this startup idea: "${idea}"
     Prior projects: "${localContext}"
-    Return ONLY valid JSON, no extra text:
+    Return ONLY valid JSON, no extra text, no markdown:
     {
       "uniquenessScore": 45,
       "noveltyLevel": "MODERATE",
