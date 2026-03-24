@@ -1,11 +1,24 @@
-
 import React, { useState, useEffect } from 'react';
 import { Search, ShieldAlert, Database, History, ChevronRight, Wand2, Plus, Trash2, Github, LayoutDashboard, BrainCircuit, AlertCircle, FileText, MessageSquare, GraduationCap, Rocket, Trophy, Globe, BookOpen, Network, Zap, Target, TrendingUp, AlertTriangle, CloudOff, RefreshCw, Send, Info } from 'lucide-react';
-import { analyzeIdea } from './services/geminiService';
 import { AnalysisResult, LocalProject } from './types';
 import Gauge from './components/Gauge';
 import MatchCard from './components/MatchCard';
 import LineageMap from './components/LineageMap';
+
+// --- VERCEL-READY API CALL ---
+const analyzeIdea = async (idea: string, localProjects: LocalProject[]): Promise<AnalysisResult> => {
+  const response = await fetch('/api/analyzeIdea', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ idea, localProjects }),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.error || 'Deep scan failed.');
+  }
+  return await response.json();
+};
 
 const App: React.FC = () => {
   const [view, setView] = useState<'home' | 'analysis' | 'admin' | 'history'>('home');
@@ -398,7 +411,7 @@ const App: React.FC = () => {
 
       <footer className="border-t border-slate-900 px-6 py-8 text-center bg-slate-950/50">
         <p className="text-[10px] text-slate-600 font-mono tracking-widest uppercase">
-          &copy; 2025 Idea Thief Detector &bull; Turbo v3.0 &bull; Shahrukh Rind
+          &copy; 2026 Idea Thief Detector &bull; Turbo v3.0 &bull; Shahrukh Rind
         </p>
       </footer>
     </div>
