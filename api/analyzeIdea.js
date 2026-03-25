@@ -1,4 +1,4 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenAI } from "@google/genai";
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -7,27 +7,83 @@ export default async function handler(req, res) {
 
   const { idea, localProjects } = req.body;
 
-  // This uses the key you will set in the Vercel Dashboard later
-  const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+  const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+
+  const localContext = localProjects && localProjects.length > 0
+    ? localProjects.map(p => `[LOCAL] ${p.title}: ${p.description}`).join('\n')
+    : "No prior local projects.";
+
+  const prompt = `
+    You are the Idea Thief Detector AI Engine.
+    Analyze the originality of this startup idea: "${idea}"
+    Prior projects: "${localContext}"
+    Return ONLY valid JSON, no extra text, no markdown, no backticks:
+    {
+      "uniquenessScore": 45,
+      "noveltyLevel": "MODERATE",
+      "honestVerdict": "verdict here",
+      "summary": "summary here",
+      "explainability": "explanation here",
+      "hotZoneAlert": true,
+      "dimensions": { "concept": 40, "execution": 50, "domainTransfer": 60 },
+      "lineage": {
+        "ancestors": ["ancestor 1", "ancestor 2"],
+        "siblings": ["sibling 1", "sibling 2"],
+        "unexploredBranches": ["branch 1", "branch 2"]
+      },
+      "psychology": {
+        "marketHook": "hook here",
+        "failureSignals": ["risk 1", "risk 2"]
+      },
+      "intel": {
+        "industryTrend": "trend here",
+        "activityLevel": 75,
+        "intelDrop": "intel here"
+      },
+      "matches": [{
+        "id": "1",
+        "title": "Competitor Name",
+        "description": "what they do",
+        "url": "https://example.com",
+        "source": "Product Hunt",
+        "similarity": 85,
+        "matchType": "Direct Competitor",
+        "metadata": { "year": "2024", "classification": { "type": "SaaS", "focus": "AI" }}
+      }],
+      "suggestions": ["suggestion 1", "suggestion 2", "suggestion 3"],
+      "confidence": 80
+    }
+  `;
 
   try {
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.0-flash-lite',
+      contents: prompt,
+    });
 
-    const prompt = `Analyze this project idea: "${idea}". 
-    Compare it against these existing local projects: ${JSON.stringify(localProjects)}. 
-    Return a detailed JSON analysis including uniquenessScore (0-100), noveltyLevel, honestVerdict, summary, suggestions, and market insights. 
-    Ensure the response is ONLY valid JSON.`;
+    const text = response.text.trim();
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) throw new Error("No JSON found in response");
 
-    const result = await model.generateContent(prompt);
-    const response = await result.response;
-    let text = response.text();
-    
-    // Clean markdown if AI includes it
-    const cleanJson = text.replace(/```json/g, "").replace(/```/g, "").trim();
-    
-    return res.status(200).json(JSON.parse(cleanJson));
+    const result = JSON.parse(jsonMatch[0]);
+
+    return res.status(200).json({
+      ...result,
+      id: Math.random().toString(36).substr(2, 9),
+      timestamp: Date.now(),
+      ideaText: idea,
+      groundingUrls: [],
+      matches: result.matches || [],
+      suggestions: result.suggestions || [],
+      lineage: {
+        ancestors: result.lineage?.ancestors || [],
+        siblings: result.lineage?.siblings || [],
+        unexploredBranches: result.lineage?.unexploredBranches || [],
+      }
+    });
+
   } catch (error) {
     console.error("Gemini Error:", error);
-    return res.status(500).json({ error: "AI Analysis failed. Check API Key." });
+    return res.status(500).json({ error: "AI Analysis failed.", details: error.message });
   }
 }
