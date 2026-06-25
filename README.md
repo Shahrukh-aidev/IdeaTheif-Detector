@@ -41,7 +41,7 @@ The goal is to provide founders with actionable intelligence before writing thou
 # Demo
 
 <p align="center">
-<img src="screenshots/home.png" width="100%">
+<img src="screenshots/search.jpeg" width="100%">
 </p>
 
 ---
@@ -68,7 +68,7 @@ The goal is to provide founders with actionable intelligence before writing thou
 ## Home
 
 <p align="center">
-<img src="screenshots/home.png" width="100%">
+<img src="Pictures/Result.jpeg" width="100%">
 </p>
 
 ---
@@ -76,7 +76,7 @@ The goal is to provide founders with actionable intelligence before writing thou
 ## Local Repository
 
 <p align="center">
-<img src="screenshots/local-repository.png" width="100%">
+<img src="Pictures/Local Repository.jpeg" width="100%">
 </p>
 
 ---
@@ -84,7 +84,7 @@ The goal is to provide founders with actionable intelligence before writing thou
 ## AI Analysis Report
 
 <p align="center">
-<img src="screenshots/report.png" width="100%">
+<img src="Pictures/Best One.jpeg" width="100%">
 </p>
 
 ---
@@ -92,7 +92,7 @@ The goal is to provide founders with actionable intelligence before writing thou
 ## Idea Lineage Visualization
 
 <p align="center">
-<img src="screenshots/lineage.png" width="100%">
+<img src="Pictures/Strategy.jpeg" width="100%">
 </p>
 
 ---
